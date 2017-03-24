@@ -1,0 +1,16 @@
+OBJS =  main.o foobar.o foo.o bar.o
+main : $(OBJS) 
+# $* stands for what the % represents, and $* is an automatic variable
+%.d: %.c
+	@set -e; rm -f $@; \
+	$(CC) -MM $(CFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+SOURCES = main.c foobar.c foo.c bar.c
+include $(SOURCES:.c=.d)
+
+.PHONY : clean
+
+clean : 
+	-rm *.o main
